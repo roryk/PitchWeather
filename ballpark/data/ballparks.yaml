@@ -1,0 +1,185 @@
+- park: Dodger Stadium
+  city: Los Angeles
+  state: CA
+  airport: KCQT
+  dome: no
+
+- park: Coors Field
+  city: Denver
+  state: CA
+  airport: KAPA
+  dome: no
+
+- park: Yankee Stadium
+  city: Bronx
+  state: NY
+  airport: KLGA
+  dome: no
+
+- park: Turner Field
+  city: Atlanta
+  state: GA
+  airport: KPDK
+  dome: no
+
+- park: Rogers Centre
+  city: Toronto
+  state: Canada
+  airport: CYTZ
+  dome: yes
+
+- park: Rangers Ballpark in Arlington
+  city: Arlington
+  state: TX
+  airport: KGKY
+  dome: no
+
+- park: Chase Field
+  city: Phoenix
+  state: AZ
+  airport: KPHX
+  dome: yes
+
+- park: Safeco Field
+  city: Seattle
+  state: WA
+  airport: KBFI
+  dome: yes
+
+- park: Angel Stadium of Anaheim
+  city: Anaheim
+  state: CA
+  airport: KFUL
+  dome: no
+
+- park: Oriole Park at Camden Yards
+  city: Baltimore
+  state: MD
+  airport: KBWI
+  dome: no
+
+- park: Busch Stadium
+  city: St. Louis
+  state: MO
+  airport: KSTL
+  dome: no
+
+- park: Citizens Bank Park
+  city: Philadelphia
+  state: PA
+  airport: KPNE
+  dome: no
+
+- park: Progressive Field
+  city: Cleveland
+  state: OH
+  airport: KBKL
+  dome: no
+
+- park: PETCO Park
+  city: San Diego
+  state: CA
+  airport: KSAN
+  dome: no
+
+- park: Great American Ball Park
+  city: Cincinnati
+  state: OH
+  airport: KLUK
+  dome: no
+
+- park: AT&amp;T Park
+  city: San Francisco
+  state: CA
+  airport: KSFO
+  dome: no
+
+- park: Miller Park
+  city: Milwaukee
+  state: WI
+  airport: KMKE
+  dome: yes
+
+- park: Citi Field
+  city: Flushing
+  state: NY
+  airport: KLGA
+  dome: no
+
+- park: Nationals Park
+  city: Washington
+  state: DC
+  airport: KDCA
+  dome: no
+
+- park: Comerica Park
+  city: Detroit
+  state: MI
+  airport: KDET
+  dome: no
+
+- park: Wrigley Field
+  city: Chicago
+  state: IL
+  airport: KMDW
+  dome: no
+
+- park: Minute Maid Park
+  city: Houston
+  state: TX
+  airport: KHOU
+  dome: yes
+
+- park: U.S. Cellular Field
+  city: Chicago
+  state: IL
+  airport: KMDW
+  dome: no
+
+- park: Target Field
+  city: Minneapolis
+  state: MN
+  airport: KMIC
+  dome: no
+
+- park: PNC Park
+  city: Pittsburgh
+  state: PA
+  airport: KAGC
+  dome: no
+
+- park: Kauffman Stadium
+  city: Kansas City
+  state: MO
+  airport: KMKC
+  dome: no
+
+- park: Fenway Park
+  city: Boston
+  state: MA
+  airport: KBOS
+  dome: no
+
+- park: Oakland Coliseum
+  city: Oakland
+  state: CA
+  airport: KOAK
+  dome: no
+
+- park: Tropicana Field
+  city: St. Petersburg
+  state: FL
+  airport: KSPG
+  dome: yes
+
+- park: Sun Life Stadium
+  city: Miami
+  state: FL
+  airport: KMIA
+  dome: no
+
+- park: Marlins Park
+  city: Miami
+  state: FL
+  airport: KMIA
+  dome: yes
