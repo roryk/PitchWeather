@@ -33,7 +33,7 @@ class WeatherGetter(object):
 
     def writeDay(self, airport, year, month, day):
         """ write a single day of airport weather to a file """
-        fname = "_".join([airport, str(year), str(month), str(day), ".csv"])
+        fname = "_".join([airport, str(year), str(month), str(day)] + ".csv")
         f = open(self.dirname + "/" + fname, "w")
         f.write(self.csv)
 
