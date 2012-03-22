@@ -1,0 +1,247 @@
+- park: Dodger Stadium
+  city: Los Angeles
+  state: CA
+  airport: KCQT
+  dome: no
+  id: 22
+  team: lan
+
+- park: Coors Field
+  city: Denver
+  state: CA
+  airport: KAPA
+  dome: no
+  id: 19
+  team: col
+
+- park: Yankee Stadium
+  city: Bronx
+  state: NY
+  airport: KLGA
+  dome: no
+  id: 3313
+  team: nya
+
+- park: Turner Field
+  city: Atlanta
+  state: GA
+  airport: KPDK
+  dome: no
+  id: 16
+  team: atl
+
+- park: Rogers Centre
+  city: Toronto
+  state: Canada
+  airport: CYTZ
+  dome: yes
+  id: 14
+  team: tor
+
+- park: Rangers Ballpark in Arlington
+  city: Arlington
+  state: TX
+  airport: KGKY
+  dome: no
+  id: 13
+  team: tex
+
+- park: Chase Field
+  city: Phoenix
+  state: AZ
+  airport: KPHX
+  dome: yes
+  id: 15
+  team: ari
+
+- park: Safeco Field
+  city: Seattle
+  state: WA
+  airport: KBFI
+  dome: yes
+  id: 680
+  team: sea
+
+- park: Angel Stadium of Anaheim
+  city: Anaheim
+  state: CA
+  airport: KFUL
+  dome: no
+  id: 1
+  team: ana
+
+- park: Oriole Park at Camden Yards
+  city: Baltimore
+  state: MD
+  airport: KBWI
+  dome: no
+  id: 2
+  team: bal
+
+- park: Busch Stadium
+  city: St. Louis
+  state: MO
+  airport: KSTL
+  dome: no
+  id: 2889
+  team: sln
+
+- park: Citizens Bank Park
+  city: Philadelphia
+  state: PA
+  airport: KPNE
+  dome: no
+  id: 2681
+  team: phi
+
+- park: Progressive Field
+  city: Cleveland
+  state: OH
+  airport: KBKL
+  dome: no
+  id: 5
+  team: cle
+
+- park: PETCO Park
+  city: San Diego
+  state: CA
+  airport: KSAN
+  dome: no
+  id: 2680
+  team: sdn
+
+- park: Great American Ball Park
+  city: Cincinnati
+  state: OH
+  airport: KLUK
+  dome: no
+  id: 2602
+  team: cin
+
+- park: AT&amp;T Park
+  city: San Francisco
+  state: CA
+  airport: KSFO
+  dome: no
+  id: 2395
+  team: sfn
+
+- park: Miller Park
+  city: Milwaukee
+  state: WI
+  airport: KMKE
+  dome: yes
+  id: 32
+  team: mil
+
+- park: Citi Field
+  city: Flushing
+  state: NY
+  airport: KLGA
+  dome: no
+  id: 3289
+  team: nyn
+
+- park: Nationals Park
+  city: Washington
+  state: DC
+  airport: KDCA
+  dome: no
+  id: 3309
+  team: was
+
+- park: Comerica Park
+  city: Detroit
+  state: MI
+  airport: KDET
+  dome: no
+  id: 2394
+  team: det
+
+- park: Wrigley Field
+  city: Chicago
+  state: IL
+  airport: KMDW
+  dome: no
+  id: 17
+  team: chn
+
+- park: Minute Maid Park
+  city: Houston
+  state: TX
+  airport: KHOU
+  dome: yes
+  id: 2392
+  team: hou
+
+- park: U.S. Cellular Field
+  city: Chicago
+  state: IL
+  airport: KMDW
+  dome: no
+  id: 4
+  team: cha
+
+- park: Target Field
+  city: Minneapolis
+  state: MN
+  airport: KMIC
+  dome: no
+  id: 3312
+  team: min
+
+- park: PNC Park
+  city: Pittsburgh
+  state: PA
+  airport: KAGC
+  dome: no
+  id: 31
+  team: pit
+
+- park: Kauffman Stadium
+  city: Kansas City
+  state: MO
+  airport: KMKC
+  dome: no
+  id: 7
+  team: kca
+
+- park: Fenway Park
+  city: Boston
+  state: MA
+  airport: KBOS
+  dome: no
+  id: 3
+  team: bos
+
+- park: Oakland Coliseum
+  city: Oakland
+  state: CA
+  airport: KOAK
+  dome: no
+  id: 10
+  team: oak
+
+- park: Tropicana Field
+  city: St. Petersburg
+  state: FL
+  airport: KSPG
+  dome: yes
+  id: 12
+  team: tba
+
+- park: Sun Life Stadium
+  city: Miami
+  state: FL
+  airport: KMIA
+  dome: no
+  id: 20
+  team: flo
+
+- park: Marlins Park
+  city: Miami
+  state: FL
+  airport: KMIA
+  dome: yes
+  id: 99
+  team: xxx
