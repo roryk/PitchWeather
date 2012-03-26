@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Index, Date
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Index
+from sqlalchemy.orm import relationship
 from meta import Base
 from dateutil import parser
 
@@ -46,14 +47,23 @@ class Pitch(Base):
     # stuff below here i think is derived
     balls = Column(Integer)
     strikes = Column(Integer)
-    game_pk = Column(Integer, ForeignKey('atbat.game_pk'), primary_key=True)
-    pitcher = Column(Integer, ForeignKey('player.id'))
-    batter = Column(Integer, ForeignKey('player.id'))
+    game_pk = Column(Integer, ForeignKey('game.game_pk'), primary_key=True)
+    pitcher_id = Column(Integer, ForeignKey('player.id'))
+    batter_id = Column(Integer, ForeignKey('player.id'))
     atbatnum = Column(Integer, ForeignKey('atbat.num'))
-    weather = Column(Integer, ForeignKey('weather.id'))
+    weather_id = Column(Integer, ForeignKey('weather.id'))
 
-    __table_args__ = (Index('pitch_pitcher', 'pitcher'),
-                      Index('pitch_batter', 'batter'),
+    game = relationship("Game",
+                        primaryjoin="Game.game_pk == Pitch.game_pk")
+    pitcher = relationship("Player",
+                           primaryjoin="Player.id == Pitch.pitcher_id")
+    batter = relationship("Player",
+                          primaryjoin="Player.id == Pitch.batter_id")
+    weather = relationship("Weather",
+                           primaryjoin="Weather.id == Pitch.weather_id")
+
+    __table_args__ = (Index('pitch_pitcher', 'pitcher_id'),
+                      Index('pitch_batter', 'batter_id'),
                       Index('pitch_atbat', 'game_pk', 'atbatnum'))
 
     def __repr__(self):
@@ -64,7 +74,9 @@ class Pitch(Base):
         self.id = int(pitch_dict['id'])
         self.des = str(pitch_dict['des'])
         self.type = str(pitch_dict['type'])
-        self.tfs_zulu = str(parser.parse(pitch_dict['tfs_zulu']))
+        utc_time = parser.parse(pitch_dict['tfs_zulu'])
+        utc_time = utc_time.replace(tzinfo=None)
+        self.tfs_zulu = str(utc_time)
         self.tfs = int(pitch_dict['tfs'])
         self.x = float(pitch_dict['x'])
         self.y = float(pitch_dict['y'])
@@ -106,6 +118,6 @@ class Pitch(Base):
         self.strikes = int(pitch_dict['strikes'])
         self.game_pk = int(pitch_dict['game_pk'])
 
-        self.batter = int(pitch_dict['batter'])
-        self.pitcher = int(pitch_dict['pitcher'])
+        self.batter_id = int(pitch_dict['batter'])
+        self.pitcher_id = int(pitch_dict['pitcher'])
         self.atbatnum = int(pitch_dict['atbatnum'])

@@ -5,6 +5,8 @@ import re
 class GamedayGetter(object):
 
     baseurl = 'http://gdx.mlb.com/components/game/mlb'
+    dir_patterns = ['year_', 'day_', 'month_', 'gid_']
+    gameday_objects = []
 
     def _format_url(self, baseurl, year=None, month=None, day=None, gid=None):
         url = baseurl
@@ -26,48 +28,77 @@ class GamedayGetter(object):
             return xml_dictlist
         else:
             return None
-        
+
     def get_one_game(self, year, month, day, gid):
+        """
+        get a single gameday object from the specified year, month, day and
+        gid
+        """
         gameurl = self._format_url(self.baseurl, year, month, day, gid)
+        game = self._get_game_from_url(gameurl)
+        return game
+
+    def walker(self, url):
+        """
+        get all gameday objects starting at url and recursing through the
+        directory tree.
+        stores the gameday objects in gameday_objects
+        """
+        if self._url_has_gid(url):
+            game = self._get_game_from_url(url)
+            self.gameday_objects.append(game)
+        else:
+            links = self._get_gameday_links_from_url(url)
+            for link in links:
+                self.walker(link)
+
+    def _get_game_from_url(self, url):
+        print "Getting game from %s." %(url)
         game = GamedayObject()
-        boxscore_xml = self._download_from_url(gameurl, "boxscore.xml")
+        boxscore_xml = self._download_from_url(url, "boxscore.xml")
         game.boxscore = self._make_dict_from_xml(boxscore_xml, "boxscore")[0]
-        game_xml = self._download_from_url(gameurl, "game.xml")
+        game_xml = self._download_from_url(url, "game.xml")
         game.game = self._make_dict_from_xml(game_xml, "game")[0]
-        players_xml = self._download_from_url(gameurl, "players.xml")
+        players_xml = self._download_from_url(url, "players.xml")
         game.players = self._make_dict_from_xml(players_xml, "player")
         game.teams = self._make_dict_from_xml(game_xml, "team")
-        innings_xml = self._download_from_url(gameurl, "inning/inning_all.xml")
+        innings_xml = self._download_from_url(url, "inning/inning_all.xml")
         game.innings = BeautifulStoneSoup(innings_xml).findAll("inning")
         game.runners = self._make_dict_from_xml(innings_xml, "runner")
         return game
 
+    def _get_gameday_links_from_url(self, url):
+        response = self._get_response_from_url(url)
+        links = []
+        if not response:
+            return None
+
+        html = response.read()
+        for link in BeautifulSoup(html).findAll("a"):
+            for pattern in self.dir_patterns:
+                if re.match(pattern, link['href']):
+                    newurl = url + str(link['href'])
+                    links.append(newurl)
+                    break
+                
+        return links
+
+    def _url_has_gid(self, url):
+        if re.search('gid_', url):
+            return True
+        else:
+            return False
+
     def _get_links_from_response(self, response, pattern):
         links = []
-        if response:
-            html = response.read()
+        if not response:
+            return None
+        
+        html = response.read()
         for link in BeautifulSoup(html).findAll("a"):
             if re.match(pattern, link['href']):
                 links.append(str(link['href']))
         return links
-                             
-    def get_day_of_gids(self, year, month, day):
-        dayurl = self._format_url(self.baseurl, year, month, day)
-        response = self._get_response_from_url(dayurl)
-        gids = self._get_links_from_response(response, "gid_")
-        return gids
-
-    def get_month_of_days(self, year, month):
-        monthurl = self._format_url(self.baseurl, year, month)
-        response = self._get_response_from_url(monthurl)
-        days = self._get_links_from_response(response, "day_")
-        return days
-
-    def get_year_of_months(self, year):
-        yearurl = self._format_url(self.baseurl, year)
-        response = self._get_response_from_url(yearurl)
-        months = self._get_links_from_response(response, "month_")
-        return months
 
     def _download_from_url(self, gameurl, filename):
         url = "/".join([gameurl, filename])
@@ -94,3 +125,19 @@ class GamedayObject(object):
         self.innings = ""
         self.team = ""
         self.runners = ""
+
+    def isComplete(self):
+        if not self.boxscore:
+            return False
+        if not self.players:
+            return False
+        if not self.game:
+            return False
+        if not self.innings:
+            return False
+        if not self.team:
+            return False
+        if not self.runners:
+            return False
+        # everything is present
+        return True

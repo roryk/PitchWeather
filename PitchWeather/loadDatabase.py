@@ -3,6 +3,7 @@ from gameday import GamedayGetter
 from models import Stadium, Weather, meta, Game, Player, Team, AtBat, Runner, Pitch
 import yaml
 from BeautifulSoup import BeautifulStoneSoup
+from dateutil import parser
 
 """
 connect the databse properly up
@@ -62,6 +63,18 @@ def test_load_gameday(session, year):
     #load_runners(session, z)
     load_atbats_and_pitches(session, z)
     session.commit()
+
+def load_gameday(session, year):
+    gg = GamedayGetter()
+    for month in gg.get_year_of_months(year):
+        for day in gg.get_month_of_days(year, month):
+            for gid in gg.get_day_of_gids(year, month, day):
+                game = gg.get_one_game(year, month, day, gid)
+                load_game(session, game)
+                load_players(session, game)
+                load_teams(session, game)
+                load_atbats_and_pitches(session, game)
+            session.commit()
 
 def load_game(session, gameday_object):
     game = Game()
@@ -177,40 +190,42 @@ def link_pitches_to_weather(session):
         # pitch -> game_pk -> stadium
         # get the date by getting
         # pitch -> game_pk -> date
-        pitch_stadium = pitch.game_pk.stadium
-        pitch_date = pitch.game_pk.date
+        pitch_stadium_id = pitch.game.stadium_id
+        pitch_date = pitch.game.date
         # get the hourly weather weather associated for this stadium and date
         # weather.stadium = pitch.stadium and weather.date = pitch.date
 
         daily_weather = session.query(Weather).\
-                        filter(Weather.stadium == pitch_stadium and
+                        filter(Weather.stadium_id == pitch_stadium_id and
                                Weather.date == pitch_date).all()
         # find the pitch time: pitch.tfs_zulu
         time_differences = []
         for weather in daily_weather:
-            time_delta = abs(weather.time - pitch.tfs_zulu)
+            pitch_time = parser.parse(pitch.tfs_zulu)
+            time_delta = abs(weather.time - pitch_time)
             time_differences.append(time_delta)
         # find the closest weather time: min(abs(pitch.tfs_zulu - weather.time))
         # add that weather object id to the pitch.weather column
         closest_weather = daily_weather[time_differences.index(min(time_differences))]
-        pitch.weather = closest_weather.id
+        pitch.weather_id = closest_weather.id
         session.commit()
 
 def test_queries(session):
-    pass
-        
+    for weather in session.query(Weather):
+        print weather
 
 def main():
     sqlite_filename = 'data/baseball.sqlite'
     stadium_filename = 'data/ballparks.yaml'
     year = 2011
     session = meta.start(sqlite_filename)
-    #load_stadiums(session, stadium_filename)
-    #load_weather(session, year)
+    load_stadiums(session, stadium_filename)
+    load_gameday(session, year)
+    load_weather(session, year)
     #test_load_weather(session, year)
     #test_load_gameday(session, year)
-    #link_pitches_to_weather()
-    test_queries(session)
+    link_pitches_to_weather(session)
+    #test_queries(session)
 
 if __name__ == "__main__":
     main()

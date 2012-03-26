@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Float, DateTime
+from sqlalchemy import (Column, Integer, String, ForeignKey, Date, Float, DateTime)
+from sqlalchemy.orm import relationship
 from meta import Base
-from Stadium import Stadium
 
 class Weather(Base):
     __tablename__ = 'weather'
@@ -12,27 +12,29 @@ class Weather(Base):
     time = Column(DateTime)
     date = Column(Date)
     hour = Column(Integer)
-    stadium = Column(Integer, ForeignKey('stadium.id'))
+    stadium_id = Column(Integer, ForeignKey('stadium.id'))
     conditions = Column(String(128))
+    stadium = relationship("Stadium",
+                           primaryjoin="Stadium.id == Weather.stadium_id")
 
     def __init__(self):
         pass
-
+    
     def loadWeatherContainer(self, weatherContainer):
         """ loads a WeatherContainer object """
         self.tempF = weatherContainer.tempF
         self.dewF = weatherContainer.dewF
         self.humidity = weatherContainer.humidity
         self.time = weatherContainer.time
-        self.stadium = weatherContainer.stadium
+        self.stadium_id = weatherContainer.stadium
         self.date = weatherContainer.date
         self.hour = weatherContainer.hour
         self.conditions = weatherContainer.conditions
 
     def __repr__(self):
-        return("<Weather('%s', '%f', '%f', '%f', '%s', '%s')>" %(str(self.stadium),
-                                                                 self.tempF,
-                                                                 self.dewF,
-                                                                 self.humidity,
+        return("<Weather('%s', '%s', '%s', '%s', '%s', '%s')>" %(str(self.stadium),
+                                                                 str(self.tempF),
+                                                                 str(self.dewF),
+                                                                 str(self.humidity),
                                                                  str(self.time),
                                                                  self.conditions))

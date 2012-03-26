@@ -11,9 +11,6 @@ class Stadium(Base):
     state = Column(String(128))
     airport = Column(String(128))
     dome = Column(Boolean)
-    # one to one relationship with a team
-    #team = relationship('Team', backref='stadium')
-    #team = Column(String(3))
     team = Column(String(3), ForeignKey('team.code'))
 
     def loadFromYaml(self, yamlLine):
