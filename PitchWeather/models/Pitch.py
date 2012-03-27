@@ -3,6 +3,14 @@ from sqlalchemy.orm import relationship
 from meta import Base
 from dateutil import parser
 
+# list out what we are expecting because they seem to be missing on a bunch of pitches
+PITCH_FIELDS = ['des', 'type', 'tfs_zulu', 'id', 'x', 'y', 'sv_id',
+                'start_speed', 'end_speed', 'sz_top', 'sz_bot',
+                'pfx_x', 'pfx_z', 'px', 'pz', 'x0', 'y0', 'z0', 'vx0',
+                'vy0', 'ax', 'ay', 'az', 'break_y', 'break_angle', 'break_length',
+                'pitch_type', 'type_confidence', 'spin_dir', 'spin_rate',
+                'nasty', 'on_1b', 'on_2b', 'on_3b']
+
 class Pitch(Base):
     __tablename__ = 'pitch'
 
@@ -70,6 +78,12 @@ class Pitch(Base):
         # make this a better representation later
         return("<Pitch(%d, %d, %f)>" %(self.id, self.game_pk, self.end_speed))
 
+    def is_pitch_dict_complete(self, pitch_dict):
+        for field in PITCH_FIELDS:
+            if field not in pitch_dict:
+                return False
+        return True
+
     def load_from_dict(self, pitch_dict):
         self.id = int(pitch_dict['id'])
         self.des = str(pitch_dict['des'])
@@ -80,8 +94,17 @@ class Pitch(Base):
         self.tfs = int(pitch_dict['tfs'])
         self.x = float(pitch_dict['x'])
         self.y = float(pitch_dict['y'])
-        self.sv_id = str(pitch_dict['sv_id'])
-        self.start_speed = float(pitch_dict['start_speed'])
+        # sv_id is not in every pitch
+        if 'sv_id' in pitch_dict:
+            self.sv_id = str(pitch_dict['sv_id'])
+        else:
+            self.sv_id = None
+        if 'start_speed' in pitch_dict:
+            self.start_speed = float(pitch_dict['start_speed'])
+        else:
+            self.start_speed = None
+            print pitch_dict
+        
         self.end_speed = float(pitch_dict['end_speed'])
         self.sz_top = float(pitch_dict['sz_top'])
         self.sz_bot = float(pitch_dict['sz_bot'])

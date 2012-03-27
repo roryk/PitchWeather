@@ -1,1 +1,1 @@
-from GamedayGetter import GamedayGetter, GamedayObject
+from GamedayGetter import GamedayObject

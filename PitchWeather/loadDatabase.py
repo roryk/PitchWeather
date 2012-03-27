@@ -1,9 +1,8 @@
 from wunderground import StadiumWeatherGetter
-from gameday import GamedayGetter
 from models import Stadium, Weather, meta, Game, Player, Team, AtBat, Runner, Pitch
 import yaml
-from BeautifulSoup import BeautifulStoneSoup
 from dateutil import parser
+from gameday.GamedayGetter import GamedayWalker
 
 """
 connect the databse properly up
@@ -14,7 +13,6 @@ find closest time to the time of the pitch (the tfs_zulu field)
 look up the weather on that date in that stadium at that time
 insert the weather into the db
 """
-
 def load_stadiums(session, stadium_filename):
     f = open(stadium_filename, 'r')
     data = yaml.load(f)
@@ -119,14 +117,7 @@ def _does_atbat_exist(session, atbat):
     else:
         return False
 
-def _load_atbat(session, gameday_object, inning, atbat):
-    atbat_dict = dict(atbat.attrs)
-    atbat_dict['inning'] = dict(inning.attrs)['num']
-    atbat_dict['game_pk'] = gameday_object.game['game_pk']
-    new_atbat = AtBat()
-    new_atbat.load_from_atbat_dict(atbat_dict)
-    if not _does_atbat_exist(session, new_atbat):
-        session.add(new_atbat)
+
 
 def _load_runner(session, gameday_object, atbat, runner):
     runner_dict = dict(runner.attrs)
@@ -218,13 +209,19 @@ def main():
     sqlite_filename = 'data/baseball.sqlite'
     stadium_filename = 'data/ballparks.yaml'
     year = 2011
-    session = meta.start(sqlite_filename)
-    load_stadiums(session, stadium_filename)
-    load_gameday(session, year)
-    load_weather(session, year)
+    Session = meta.start(sqlite_filename)
+    load_stadiums(Session, stadium_filename)
+    x = GamedayWalker()
+    #x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/',
+    #         Session)
+#    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/day_08/gid_2011_07_08_balmlb_bosmlb_1/', Session)
+#    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/day_08/', Session)
+    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/', Session)
+    #load_gameday(Session(), year)
+    #load_weather(Session(), year)
     #test_load_weather(session, year)
     #test_load_gameday(session, year)
-    link_pitches_to_weather(session)
+    #link_pitches_to_weather(Session())
     #test_queries(session)
 
 if __name__ == "__main__":
