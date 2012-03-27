@@ -10,11 +10,11 @@ DIR_PATTERNS = ['year_', 'day_', 'month_', 'gid_']
 
 class GamedayWalker(object):
 
-    MAX_THREADS = 50
+    MAX_THREADS = 10
 
     def __init__(self):
-        self.url_queue = Queue(maxsize=50)
-        self.gid_queue = Queue(maxsize=50)
+        self.url_queue = Queue(maxsize=10000)
+        self.gid_queue = Queue(maxsize=100)
         self.gameday_queue = Queue(maxsize=50)
 
     def walker(self, url, Session):
@@ -38,7 +38,7 @@ class GamedayWalker(object):
             gid_thread.start()
 
         # these load the gameobjects into the database
-        for i in xrange(0, 5):
+        for i in xrange(0, 1):
             gameday_thread = GamedayObjectLoader(self.gameday_queue, Session)
             gameday_thread.setDaemon(True)
             gameday_thread.start()

@@ -3,6 +3,10 @@ from sqlalchemy.orm import relationship
 from meta import Base
 from dateutil import parser
 
+GAME_FIELDS = ['game_pk', 'type', 'away_team_code', 'home_team_code',
+               'away_fname', 'home_fname', 'away_sname', 'home_sname',
+               'stadium_id', 'date', 'league', 'status', 'start_time_est']
+
 class Game(Base):
     __tablename__ = 'game'
     
@@ -48,3 +52,10 @@ class Game(Base):
         date = (str(gamefile.boxscore['date']) + " " +
                 str(gamefile.game['game_time_et']) + " EST")
         self.start_time_est = parser.parse(date)
+
+    def is_complete(self, gameday_object):
+        for field in GAME_FIELDS:
+            if(field not in gameday_object.boxscore or
+               field not in gameday_object.game):
+                return False
+        return True

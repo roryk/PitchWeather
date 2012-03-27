@@ -78,11 +78,18 @@ class Pitch(Base):
         # make this a better representation later
         return("<Pitch(%d, %d, %f)>" %(self.id, self.game_pk, self.end_speed))
 
-    def is_pitch_dict_complete(self, pitch_dict):
+    def is_complete(self, pitch_dict):
         for field in PITCH_FIELDS:
             if field not in pitch_dict:
                 return False
         return True
+
+    def _convert_value(self, value, fun):
+        try:
+            converted = fun(value)
+        except ValueError:
+            converted = None
+        return converted
 
     def load_from_dict(self, pitch_dict):
         self.id = int(pitch_dict['id'])
@@ -91,20 +98,11 @@ class Pitch(Base):
         utc_time = parser.parse(pitch_dict['tfs_zulu'])
         utc_time = utc_time.replace(tzinfo=None)
         self.tfs_zulu = str(utc_time)
-        self.tfs = int(pitch_dict['tfs'])
+        self.tfs = self._convert_value(pitch_dict['tfs'], int)
         self.x = float(pitch_dict['x'])
         self.y = float(pitch_dict['y'])
-        # sv_id is not in every pitch
-        if 'sv_id' in pitch_dict:
-            self.sv_id = str(pitch_dict['sv_id'])
-        else:
-            self.sv_id = None
-        if 'start_speed' in pitch_dict:
-            self.start_speed = float(pitch_dict['start_speed'])
-        else:
-            self.start_speed = None
-            print pitch_dict
-        
+        self.sv_id = str(pitch_dict['sv_id'])
+        self.start_speed = float(pitch_dict['start_speed'])
         self.end_speed = float(pitch_dict['end_speed'])
         self.sz_top = float(pitch_dict['sz_top'])
         self.sz_bot = float(pitch_dict['sz_bot'])

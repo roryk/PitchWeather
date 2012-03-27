@@ -48,130 +48,6 @@ def test_load_weather(session, year):
             session.add(new_weather_object)
         session.commit()
         
-def test_load_gameday(session, year):
-    gg = GamedayGetter()
-    year = 2011
-    month = 7
-    day = 14
-    gid = 'gid_2011_07_14_clemlb_balmlb_1/'
-    z = gg.get_one_game(year, month, day, gid)
-    load_game(session, z)
-    load_players(session, z)
-    load_teams(session, z)
-    #load_runners(session, z)
-    load_atbats_and_pitches(session, z)
-    session.commit()
-
-def load_gameday(session, year):
-    gg = GamedayGetter()
-    for month in gg.get_year_of_months(year):
-        for day in gg.get_month_of_days(year, month):
-            for gid in gg.get_day_of_gids(year, month, day):
-                game = gg.get_one_game(year, month, day, gid)
-                load_game(session, game)
-                load_players(session, game)
-                load_teams(session, game)
-                load_atbats_and_pitches(session, game)
-            session.commit()
-
-def load_game(session, gameday_object):
-    game = Game()
-    game.load_from_gameday_object(gameday_object)
-    if not session.query(Game).filter(Game.game_pk == game.game_pk).all():
-        session.add(game)
-
-def load_players(session, gameday_object):
-    new_players = []
-    for player_dict in gameday_object.players:
-        player = Player()
-        player.load_from_player_dict(player_dict)
-        if not session.query(Player).filter(Player.id == player.id).all():
-            new_players.append(player)
-    session.add_all(new_players)
-
-def load_teams(session, gameday_object):
-    for team_dict in gameday_object.teams:
-        team = Team()
-        team.load_from_team_dict(team_dict)
-        if not _does_team_exist(session, team):
-            session.add(team)
-
-def load_runners(session, gameday_object):
-    print gameday_object.innings
-    print len(gameday_object.innings)
-    #for inning in gameday_object.innings:
-    #    print inning
-
-def _does_team_exist(session, team):
-    query = session.query(Team).filter(Team.code == team.code).all()
-    if query:
-        return True
-    else:
-        return False
-    
-def _does_atbat_exist(session, atbat):
-    query = session.query(AtBat).filter(AtBat.num == atbat.num and
-                                        AtBat.game_pk == atbat.game_pk).all()
-    if query:
-        return True
-    else:
-        return False
-
-
-
-def _load_runner(session, gameday_object, atbat, runner):
-    runner_dict = dict(runner.attrs)
-    runner_dict['game_pk'] = gameday_object.game['game_pk']
-    runner_dict['atbatnum'] = atbat['num']
-    new_runner = Runner()
-    new_runner.load_from_dict(runner_dict)
-    session.add(new_runner)
-
-def _load_pitch(session, gameday_object, atbat, pitch, count):
-    pitch_dict = dict(pitch.attrs)
-    atbat_dict = dict(atbat.attrs)
-    pitch_dict['on_1b'] = None
-    pitch_dict['on_2b'] = None
-    pitch_dict['on_3b'] = None
-    pitch_dict['balls'] = count['balls']
-    pitch_dict['strikes'] = count['strikes']
-    pitch_dict['game_pk'] = gameday_object.game['game_pk']
-    pitch_dict['batter'] = atbat_dict['batter']
-    pitch_dict['pitcher'] = atbat_dict['pitcher']
-    pitch_dict['atbatnum'] = atbat_dict['num']
-    runners = pitch.findAll('runner')
-    if runners:
-        for runner in runners:
-            if runner['start'] == '1B':
-                pitch_dict['on_1b'] = runner['id']
-            if runner['start'] == '2B':
-                pitch_dict['on_2b'] = runner['id']
-            if runner['start'] == '3B':
-                pitch_dict['on_3b'] = runner['id']
-    new_pitch = Pitch()
-    new_pitch.load_from_dict(pitch_dict)
-    session.add(new_pitch)
-
-def load_atbats_and_pitches(session, gameday_object):
-    half_strings = ["top", "bottom"]
-
-    for inning in gameday_object.innings:
-        for half_string in half_strings:
-            half = inning.findAll(half_string)[0]
-            for atbat in half.findAll('atbat'):
-                _load_atbat(session, gameday_object, inning, atbat)
-                for runner in atbat.findAll('runner'):
-                    _load_runner(session, gameday_object, atbat, runner)
-                count = {'balls': 0, 'strikes': 0}
-                for pitch in atbat.findAll('pitch'):
-                    if pitch['type'] == 'S':
-                        count['strikes'] = count['strikes'] + 1
-                    if pitch['type'] == 'B':
-                        count['balls'] = count['balls'] + 1
-                    _load_pitch(session, gameday_object, atbat, pitch, count)
-
-    session.commit()
-
 def link_pitches_to_weather(session):
     #### probably have to convert the dates back to datetime obejcts
     ## pseudocode for this routine
@@ -216,11 +92,10 @@ def main():
     #         Session)
 #    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/day_08/gid_2011_07_08_balmlb_bosmlb_1/', Session)
 #    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/day_08/', Session)
-    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/', Session)
-    #load_gameday(Session(), year)
+#    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/', Session)
+    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/', Session)
     #load_weather(Session(), year)
     #test_load_weather(session, year)
-    #test_load_gameday(session, year)
     #link_pitches_to_weather(Session())
     #test_queries(session)
 
