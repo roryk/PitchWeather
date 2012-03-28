@@ -7,6 +7,10 @@ GAME_FIELDS = ['game_pk', 'type', 'away_team_code', 'home_team_code',
                'away_fname', 'home_fname', 'away_sname', 'home_sname',
                'stadium_id', 'date', 'league', 'status', 'start_time_est']
 
+EXPECTED_GAME_FIELDS = ['game_pk', 'type', 'away_team_code', 'home_team_code',
+                        'away_fname', 'home_fname', 'away_sname', 'home_sname',
+                        'home_sport_code', 'date', 'venue_id', 'status_ind']
+                        
 class Game(Base):
     __tablename__ = 'game'
     
@@ -54,8 +58,8 @@ class Game(Base):
         self.start_time_est = parser.parse(date)
 
     def is_complete(self, gameday_object):
-        for field in GAME_FIELDS:
-            if(field not in gameday_object.boxscore or
+        for field in EXPECTED_GAME_FIELDS:
+            if(field not in gameday_object.boxscore and
                field not in gameday_object.game):
                 return False
         return True

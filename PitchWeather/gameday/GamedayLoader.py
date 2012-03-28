@@ -18,9 +18,9 @@ class GamedayObjectLoader(Thread):
     def _load_gameday_object_into_db(self, gameday_object):
         print "Loading %s." %(gameday_object.url)
         self._load_game(gameday_object)
-        self._load_players(gameday_object)
-        self._load_teams(gameday_object)
-        self._load_atbats_and_pitches(gameday_object)
+        #self._load_players(gameday_object)
+        #self._load_teams(gameday_object)
+        #self._load_atbats_and_pitches(gameday_object)
         print "Finished %s." %(gameday_object.url)
 
     def _load_game(self, gameday_object):

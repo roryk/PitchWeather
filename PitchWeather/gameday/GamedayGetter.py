@@ -17,6 +17,21 @@ class GamedayWalker(object):
         self.gid_queue = Queue(maxsize=100)
         self.gameday_queue = Queue(maxsize=50)
 
+    def walk_year(self, year, Session):
+        """
+        grab the gameday data for an entire year. exits if the year is less than
+        2009
+        """
+        if year < 2009:
+            error = "PitchFX data for years < 2009 might not load properly due to"\
+                    "changes in the structure of the data. Aborting."
+            print(error)
+            exit(-1)
+
+        print "Loading data for %d, this will take multiple hours." %(year)
+        url = BASEURL + "/" + 'year_' + str(year) + "/"
+        self.walker(url, Session)
+
     def walker(self, url, Session):
         """
         starting at the given URL walk the URL tree to find and load all of

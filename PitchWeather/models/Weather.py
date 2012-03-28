@@ -1,4 +1,5 @@
-from sqlalchemy import (Column, Integer, String, ForeignKey, Date, Float, DateTime)
+from sqlalchemy import (Column, Integer, String, ForeignKey, Date, Float, DateTime,
+                        Index)
 from sqlalchemy.orm import relationship
 from meta import Base
 
@@ -17,6 +18,9 @@ class Weather(Base):
     stadium = relationship("Stadium",
                            primaryjoin="Stadium.id == Weather.stadium_id")
 
+    __table_args__ = (Index('weather_stadium', 'stadium_id'),
+                      Index('weather_date', 'date'))
+    
     def __init__(self):
         pass
     
