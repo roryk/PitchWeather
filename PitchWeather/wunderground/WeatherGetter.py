@@ -1,9 +1,9 @@
 from urllib2 import urlopen, URLError
-from WeatherContainer import WeatherContainer
 import datetime
 import sys
 import yaml
 import os
+from dateutil import parser
 
 WEATHERHEADER = ['timeEST', 'tempF', 'dewF', 'humidity', 'pressure', 'visibility',
                  'windDir', 'windSpeed', 'gustSpeed', 'precip', 'events',
@@ -89,9 +89,11 @@ class WeatherGetter(object):
             if line == '':
                 continue
             line = dict(zip(WEATHERHEADER, line.split(',')))
-            weather = WeatherContainer(line)
-            weather.airport = airport
-            weatherObjects.append(weather)
+            weather = WeatherContainer()
+            if weather.is_complete(line):
+                weather.load_container(line)
+                weather.airport = airport
+                weatherObjects.append(weather)
 
         return weatherObjects
 
@@ -106,8 +108,7 @@ class StadiumWeatherGetter(WeatherGetter):
 
     def getWeatherForYearAtStadium(self, stadium, year):
         airport = stadium['airport']
-        #yearly_weather = self.getWeatherForYear(airport, year)
-        yearly_weather = self.getWeatherForMonth(airport, year, 2)
+        yearly_weather = self.getWeatherForYear(airport, year)
         for daily_weather in yearly_weather:
             for hourly_weather in daily_weather:
                 hourly_weather.stadium = stadium['id']
@@ -129,3 +130,54 @@ class StadiumWeatherGetter(WeatherGetter):
         f = open(parkfile, "r")
         self._stadiums =  yaml.load(f)
         self._stadiumIterator = iter(self._stadiums)
+
+class WeatherContainer(object):
+
+    def load_container(self, line):
+        for key in WEATHERHEADER:
+            setattr(self, key, line[key])
+
+        self.tempF = self._str2float(self.tempF)
+        self.dewF = self._str2float(self.dewF)
+        self.humidity = self._str2float(self.humidity)
+        self.pressure = self._str2float(self.pressure)
+        self.visibility = self._str2float(self.visibility)
+        self.windSpeed = self._str2float(self.windSpeed)
+        self.gustSpeed = self._str2float(self.gustSpeed)
+        self.precip = self._str2float(self.precip)
+        self.windDirDeg = self._str2float(self.windDirDeg)
+        #self.timeUTC = datetime.datetime.strptime(self.timeUTC, '%Y-%m-%d %H:%M:%S')
+        self.timeUTC = parser.parse(self.timeUTC + "Z" + "+00:00")
+        self.airport = None
+        self.stadium = None
+
+    def is_complete(self, line):
+        for key in WEATHERHEADER:
+            if key not in line:
+                return False
+        return True
+
+    def _str2float(self, field):
+        try:
+            field = float(field)
+        except ValueError:
+            field = 0.0
+        return field
+    
+    def __repr__(self):
+        return("<Weather('%s', '%f', '%f', '%s')>" %(self.timeUTC,
+                                                     self.tempF,
+                                                     self.humidity,
+                                                     self.conditions))
+
+    def __getTime(self):
+        return self.timeUTC
+    time = property(__getTime)
+
+    def __getHour(self):
+        return self.timeUTC.hour
+    hour = property(__getHour)
+
+    def __getDate(self):
+        return self.timeUTC.date()
+    date = property(__getDate)

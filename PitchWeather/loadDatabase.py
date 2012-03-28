@@ -1,41 +1,35 @@
 from wunderground import StadiumWeatherGetter
-from models import Stadium, Weather, meta, Game, Player, Team, AtBat, Runner, Pitch
+from models import Stadium, Weather, meta
 import yaml
 from dateutil import parser
 from gameday.GamedayGetter import GamedayWalker
+from sqlalchemy.exc import IntegrityError
 
-"""
-connect the databse properly up
-for each pitch
-figure out the correct stadium from the game_pk field (i think)
-connect to the id of the right stadium
-find closest time to the time of the pitch (the tfs_zulu field)
-look up the weather on that date in that stadium at that time
-insert the weather into the db
-"""
 def load_stadiums(session, stadium_filename):
     f = open(stadium_filename, 'r')
     data = yaml.load(f)
-    stadiums = []
     for line in data:
         stadium = Stadium()
         stadium.loadFromYaml(line)
-        stadiums.append(stadium)
-    session.add_all(stadiums)
-    session.commit()
+        try:
+            session.add(stadium)
+            session.commit()
+        except IntegrityError:
+            session.rollback()
 
 def load_weather(session, year):
     swg = StadiumWeatherGetter()
     for stadium in swg.getStadiums():
         yearly_weather = swg.getWeatherForYearAtStadium(stadium, year)
         for daily_weather in yearly_weather:
-            weather_objects = []
             for hourly_weather in daily_weather:
                 new_weather_object = Weather()
                 new_weather_object.loadWeatherContainer(hourly_weather)
-                weather_objects.append(new_weather_object)
-            session.add_all(weather_objects)
-            session.commit()            
+                try:
+                    session.add(new_weather_object)
+                    session.commit()
+                except IntegrityError:
+                    session.rollback()
 
 def test_load_weather(session, year):
     swg = StadiumWeatherGetter()
@@ -93,8 +87,8 @@ def main():
 #    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/day_08/gid_2011_07_08_balmlb_bosmlb_1/', Session)
 #    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/day_08/', Session)
 #    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/month_07/', Session)
-    x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/', Session)
-    #load_weather(Session(), year)
+    #x.walker('http://gd2.mlb.com/components/game/mlb/year_2011/', Session)
+    load_weather(Session(), year)
     #test_load_weather(session, year)
     #link_pitches_to_weather(Session())
     #test_queries(session)
